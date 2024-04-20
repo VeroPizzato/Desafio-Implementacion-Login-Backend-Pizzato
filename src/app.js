@@ -1,4 +1,5 @@
 const express = require('express')
+const cookieParser = require('cookie-parser')
 // const handlebars = require('express-handlebars')
 const handlebarsExpress = require('express-handlebars')
 const viewsRouter = require('./routes/views')
@@ -18,6 +19,9 @@ const FilesCartManager = require('./dao/fileManagers/CartManager')
 const DbCartManager = require('./dao/dbManagers/CartManager')
 
 const app = express()
+
+app.use(cookieParser)
+app.use('/', require('../src/routes/cookie'))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
