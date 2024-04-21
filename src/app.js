@@ -1,7 +1,4 @@
 const express = require('express')
-const cookieParser = require('cookie-parser')
-const session = require('express-session')
-const FileStore = require('session-file-store')
 // const handlebars = require('express-handlebars')
 const handlebarsExpress = require('express-handlebars')
 const viewsRouter = require('./routes/views')
