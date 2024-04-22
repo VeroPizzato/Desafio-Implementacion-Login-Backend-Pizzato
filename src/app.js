@@ -4,6 +4,7 @@ const handlebarsExpress = require('express-handlebars')
 const viewsRouter = require('./routes/views')
 const { Server } = require('socket.io')
 const mongoose = require('mongoose')
+const session = require('express-session')
 
 const cartsRouter = require('./routes/carts')
 // const { router: productsRouter, productsManager } = require('./routes/products')
@@ -39,10 +40,15 @@ app.set("view engine", "handlebars")
 app.use('/products/detail', express.static(`${__dirname}/../public`));  // para encontrar la carpeta public
 app.use('/carts', express.static(`${__dirname}/../public`));
 
+app.use(session({
+    secret: 'secretCoder',
+    resave: true,
+    saveUninitialized: true
+}));
+
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/', viewsRouter)
-
 
 const main = async () => {
 
