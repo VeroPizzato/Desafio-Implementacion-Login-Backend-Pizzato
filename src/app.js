@@ -5,6 +5,8 @@ const viewsRouter = require('./routes/views')
 const { Server } = require('socket.io')
 const mongoose = require('mongoose')
 const session = require('express-session')
+const MongoStore = require('connect-mongo')
+const sessionRouter = require('./routes/session')
 
 const cartsRouter = require('./routes/carts')
 // const { router: productsRouter, productsManager } = require('./routes/products')
@@ -41,6 +43,11 @@ app.use('/products/detail', express.static(`${__dirname}/../public`));  // para 
 app.use('/carts', express.static(`${__dirname}/../public`));
 
 app.use(session({
+    store: MongoStore.create({
+        dbName: 'ecommerce',
+        mongoUrl: 'mongodb+srv://verizzato:Mavepi76@codercluster.wmmycws.mongodb.net/?retryWrites=true&w=majority&appName=CoderCluster', 
+        ttl: 60
+    }),
     secret: 'secretCoder',
     resave: true,
     saveUninitialized: true
@@ -49,6 +56,7 @@ app.use(session({
 app.use('/api/products', productsRouter)
 app.use('/api/carts', cartsRouter)
 app.use('/', viewsRouter)
+app.use('/session', sessionRouter)
 
 const main = async () => {
 
