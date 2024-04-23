@@ -18,9 +18,8 @@ module.exports = {
         next()
     },
     userIsAdmin: (req, res, next) => {
-        // el usuario debe ser admin  
-        // VER!!      
-        if (req.session.user.rol != admin ) {
+        // el usuario debe ser admin           
+        if (req.session.user.rol != "admin" ) {
             return res.status(401).json({error: 'User should be admin!'})
         }
         

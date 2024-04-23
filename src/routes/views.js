@@ -2,7 +2,7 @@ const { Router } = require('express')
 const router = Router()
 const { validarNuevoProducto } = require('./products')
 const User = require('../dao/models/user')
-const { userIsLoggedIn, userIsNotLoggedIn }= require('../middlewares/auth.middleware')
+const { userIsLoggedIn, userIsNotLoggedIn, userIsAdmin }= require('../middlewares/auth.middleware')
 
 router.get('/', (req, res) => {
     const isLoggedIn = ![null, undefined].includes(req.session.user)
@@ -32,11 +32,14 @@ router.get('/products', userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         let products = await ProductManager.getProducts(req.query)
+        let user = req.session.user
+        console.log(user)
 
         res.render('home', {
             title: 'Home',
             styles: ['styles.css'],
-            products
+            products, 
+            user
         })
     } catch (error) {
         console.error('Error al al cargar los productos:', error)
@@ -101,7 +104,7 @@ router.get('/carts/:cid', userIsLoggedIn, async (req, res) => {
     }
 })
 
-router.get('/realtimeproducts', userIsLoggedIn, async (req, res) => {
+router.get('/realtimeproducts', userIsLoggedIn, userIsAdmin, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         const products = await ProductManager.getProducts(req.query)

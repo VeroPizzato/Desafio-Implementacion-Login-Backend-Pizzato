@@ -18,13 +18,13 @@ const router = Router()
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
     // 1. verificar que el usuario exista en la BD
-    const user = await User.findOne({ email, password })
+    const user = await User.findOne({ email, password})  
     if (!user) {
         return res.status(400).send('Invalid email or password!')
     }  
-    // 2. crear nueva sesión si el usuario existe
-    req.session.user = { id: user._id.toString(), email: user.email }   
-    res.redirect('/')
+    // 2. crear nueva sesión si el usuario existe    
+    req.session.user = { id: user._id.toString(), email: user.email, first_name: user.first_name, last_name: user.last_name, rol: user.rol }   
+    res.redirect('/products')
 })
 
 router.get('/logout', (req, res) => {
@@ -45,9 +45,8 @@ router.post('/register', async (req, res) => {
             password,
             rol
         })
-
-        req.session.user = { id: user._id.toString(), email: user.email }
-        res.redirect('/')
+        
+        res.redirect('/login')
     }
     catch (err) {
         console.log(err)
