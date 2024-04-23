@@ -1,6 +1,50 @@
 const { Router } = require('express')
 const router = Router()
 const { validarNuevoProducto } = require('./products')
+const User = require('../dao/models/user')
+const { userIsLoggedIn, userIsNotLoggedIn }= require('../middlewares/auth.middleware')
+
+router.get('/', (req, res) => {
+    const isLoggedIn = ![null, undefined].includes(req.session.user)
+
+    res.render('index', {
+        title: 'Home',
+        isLoggedIn,
+        isNotLoggedIn: !isLoggedIn,
+    })
+})
+
+router.get('/login', userIsNotLoggedIn,  (_, res) => {
+    // middleware userIsNotLoggedIn: sólo se puede acceder si no está logueado
+    res.render('login', {
+        title: 'Login'
+    })
+})
+
+router.get('/register', userIsNotLoggedIn, (_, res) => {
+    // middleware userIsNotLoggedIn: sólo se puede acceder si no está logueado
+    res.render('register', {
+        title: 'Register'
+    })
+})
+
+router.get('/profile', userIsLoggedIn, async(req, res) => {
+    // middleware userIsLoggedIn: sólo se puede acceder si está logueado    
+    const idFromSession = req.session.user._id
+    const user = await User.findOne({_id: idFromSession })   
+
+    console.log(user)  // user esta en NULL !! VER !
+
+    res.render('profile', {
+        title: 'My profile',
+        user: {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            age: user.age,
+            email: user.email
+        }
+    })
+})
 
 router.get('/products', async (req, res) => {
     try {
