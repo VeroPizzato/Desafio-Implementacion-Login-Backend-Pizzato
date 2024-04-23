@@ -32,8 +32,7 @@ router.get('/products', userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         let products = await ProductManager.getProducts(req.query)
-        let user = req.session.user
-        console.log(user)
+        let user = req.session.user       
 
         res.render('home', {
             title: 'Home',
@@ -57,7 +56,7 @@ router.get('/products/detail/:pid', userIsLoggedIn, async (req, res) => {
             title: 'Product Detail',
             scripts: ['productoDetail.js'],
             useSweetAlert: true,
-            styles: ['productos.css'],
+            styles: ['styles.css'],
             useWS: false,
             product
         }

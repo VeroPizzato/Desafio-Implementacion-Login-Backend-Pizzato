@@ -4,26 +4,26 @@ const User = require('../dao/models/user')
 
 const router = Router()
 
-// router.get('/', (req, res) => {
-
-//     if (req.session.counter) {
-//         req.session.counter++
-//         return res.send(`Esta es su visita nro. ${req.session.counter}`)
-//     }
-
-//     req.session.counter = 1
-//     res.send('Bienvenido! Esta es su primer visita!')
-// })
-
 router.post('/login', async (req, res) => {
     const { email, password } = req.body
+
+    if (email === "adminCoder@coder.com" && password === "adminCod3r123") {
+        // Datos de sesión para el usuario coder Admin
+        req.session.user = {
+            first_name: "Usuario",
+            last_name: "de CODER",
+            rol: "admin"
+        };
+        return res.redirect('/products');
+    }
+
     // 1. verificar que el usuario exista en la BD
     const user = await User.findOne({ email, password})  
     if (!user) {
         return res.status(400).send('Invalid email or password!')
     }  
     // 2. crear nueva sesión si el usuario existe    
-    req.session.user = { id: user._id.toString(), email: user.email, first_name: user.first_name, last_name: user.last_name, rol: user.rol }   
+    req.session.user = { first_name: user.first_name, last_name: user.last_name, rol: user.rol }   
     res.redirect('/products')
 })
 
