@@ -34,7 +34,7 @@ router.get('/logout', (req, res) => {
 })
 
 router.post('/register', async (req, res) => {
-    const { first_name, last_name, email, age, password } = req.body
+    const { first_name, last_name, email, age, password, rol } = req.body
 
     try {
         const user = await User.create({
@@ -42,7 +42,8 @@ router.post('/register', async (req, res) => {
             last_name,
             age: +age,
             email,
-            password
+            password,
+            rol
         })
 
         req.session.user = { id: user._id.toString(), email: user.email }

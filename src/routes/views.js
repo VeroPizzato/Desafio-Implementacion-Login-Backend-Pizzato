@@ -8,7 +8,7 @@ router.get('/', (req, res) => {
     const isLoggedIn = ![null, undefined].includes(req.session.user)
 
     res.render('index', {
-        title: 'Home',
+        title: 'Inicio',
         isLoggedIn,
         isNotLoggedIn: !isLoggedIn,
     })
@@ -28,32 +28,14 @@ router.get('/register', userIsNotLoggedIn, (_, res) => {
     })
 })
 
-router.get('/profile', userIsLoggedIn, async(req, res) => {
-    // middleware userIsLoggedIn: sólo se puede acceder si está logueado    
-    const idFromSession = req.session.user._id
-    const user = await User.findOne({_id: idFromSession })   
-
-    console.log(user)  // user esta en NULL !! VER !
-
-    res.render('profile', {
-        title: 'My profile',
-        user: {
-            first_name: user.first_name,
-            last_name: user.last_name,
-            age: user.age,
-            email: user.email
-        }
-    })
-})
-
-router.get('/products', async (req, res) => {
+router.get('/products', userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         let products = await ProductManager.getProducts(req.query)
 
         res.render('home', {
             title: 'Home',
-            styles: ['productos.css'],
+            styles: ['styles.css'],
             products
         })
     } catch (error) {
@@ -61,7 +43,7 @@ router.get('/products', async (req, res) => {
     }
 })
 
-router.get('/products/detail/:pid', async (req, res) => {
+router.get('/products/detail/:pid', userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
 
@@ -84,7 +66,7 @@ router.get('/products/detail/:pid', async (req, res) => {
     }
 })
 
-router.get('/products/addCart/:pid', async (req, res) => {
+router.get('/products/addCart/:pid', userIsLoggedIn,  async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')        
         const prodId = req.params.pid        
@@ -99,7 +81,7 @@ router.get('/products/addCart/:pid', async (req, res) => {
     }
 })
 
-router.get('/carts/:cid', async (req, res) => {
+router.get('/carts/:cid', userIsLoggedIn, async (req, res) => {
     try {
         const CartManager = req.app.get('CartManager')
         const cartId = req.params.cid
@@ -107,7 +89,7 @@ router.get('/carts/:cid', async (req, res) => {
 
         let data = {
             title: 'Cart Detail',          
-            styles: ['productos.css'],
+            styles: ['styles.css'],
             useWS: false,
             cart
         }
@@ -119,13 +101,13 @@ router.get('/carts/:cid', async (req, res) => {
     }
 })
 
-router.get('/realtimeproducts', async (req, res) => {
+router.get('/realtimeproducts', userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         const products = await ProductManager.getProducts(req.query)
         res.render('realTimeProducts', {
             title: 'Productos en tiempo real',
-            styles: ['productos.css'],
+            styles: ['styles.css'],
             products,
             useWS: true,
             scripts: [
@@ -137,7 +119,7 @@ router.get('/realtimeproducts', async (req, res) => {
     }
 })
 
-router.post('/realtimeproducts', validarNuevoProducto, async (req, res) => {
+router.post('/realtimeproducts', validarNuevoProducto, userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         const product = req.body
@@ -165,7 +147,7 @@ router.post('/realtimeproducts', validarNuevoProducto, async (req, res) => {
     }
 })
 
-router.get('/newProduct', async (_, res) => {
+router.get('/newProduct', userIsLoggedIn, async (_, res) => {
     res.render('newProduct', {
         title: 'Nuevo Producto',
     })
