@@ -32,7 +32,7 @@ router.get('/products', userIsLoggedIn, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         let products = await ProductManager.getProducts(req.query)
-        let user = req.session.user       
+        let user = req.session.user     
 
         res.render('home', {
             title: 'Home',
@@ -56,7 +56,7 @@ router.get('/products/detail/:pid', userIsLoggedIn, async (req, res) => {
             title: 'Product Detail',
             scripts: ['productoDetail.js'],
             useSweetAlert: true,
-            styles: ['styles.css'],
+            styles: ['productos.css'],
             useWS: false,
             product
         }
@@ -121,7 +121,7 @@ router.get('/realtimeproducts', userIsLoggedIn, userIsAdmin, async (req, res) =>
     }
 })
 
-router.post('/realtimeproducts', validarNuevoProducto, userIsLoggedIn, async (req, res) => {
+router.post('/realtimeproducts', validarNuevoProducto, userIsLoggedIn, userIsAdmin, async (req, res) => {
     try {
         const ProductManager = req.app.get('ProductManager')
         const product = req.body
@@ -149,7 +149,7 @@ router.post('/realtimeproducts', validarNuevoProducto, userIsLoggedIn, async (re
     }
 })
 
-router.get('/newProduct', userIsLoggedIn, async (_, res) => {
+router.get('/newProduct', userIsLoggedIn, userIsAdmin, async (_, res) => {
     res.render('newProduct', {
         title: 'Nuevo Producto',
     })
